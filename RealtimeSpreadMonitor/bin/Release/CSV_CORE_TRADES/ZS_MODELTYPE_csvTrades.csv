@@ -1,0 +1,7 @@
+"Firm Id","Acct Id","Exchange","Ticker Symbol","Product Name","CC Code","Period Code","Put / Call","Strike","Underlying Period Code","Net Positions","Margin Type","Client ID"
+"tml1","ZS_MODELTYPE","CBT","","","S","201605","PUT","7.8","201605","1","",
+"tml1","ZS_MODELTYPE","CBT","","","S","201605","PUT","8.8","201605","-1","",
+"tml1","ZS_MODELTYPE","CBT","","","S","201605","CALL","8.9","201605","-1","",
+"tml1","ZS_MODELTYPE","CBT","","","S","201605","CALL","9.9","201605","1","",
+"tml1","ZS_MODELTYPE","CBT","","","S","201605","PUT","7.6","201605","-3","",
+"tml1","ZS_MODELTYPE","CBT","","","S","201605","PUT","9","201605","3","",

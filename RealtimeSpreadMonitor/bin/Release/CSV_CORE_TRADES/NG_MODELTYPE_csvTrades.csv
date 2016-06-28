@@ -1,0 +1,7 @@
+"Firm Id","Acct Id","Exchange","Ticker Symbol","Product Name","CC Code","Period Code","Put / Call","Strike","Underlying Period Code","Net Positions","Margin Type","Client ID"
+"tml1","NG_MODELTYPE","NYMEX","","","ON","201604","PUT","1.05","201604","1","",
+"tml1","NG_MODELTYPE","NYMEX","","","ON","201604","PUT","1.8","201604","-1","",
+"tml1","NG_MODELTYPE","NYMEX","","","ON","201604","CALL","1.85","201604","-1","",
+"tml1","NG_MODELTYPE","NYMEX","","","ON","201604","CALL","2.6","201604","1","",
+"tml1","NG_MODELTYPE","NYMEX","","","ON","201604","CALL","1.8","201604","-2","",
+"tml1","NG_MODELTYPE","NYMEX","","","ON","201604","CALL","2.5","201604","2","",
