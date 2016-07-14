@@ -109,6 +109,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Formatting, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,6 +138,11 @@
     <Compile Include="CMEMarginENUMS.cs" />
     <Compile Include="CMEMarginObjects.cs" />
     <Compile Include="ConversionAndFormatting.cs" />
+    <Compile Include="DataClassesTMLDB.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataClassesTMLDB.dbml</DependentUpon>
+    </Compile>
     <Compile Include="FormManipulation\CommonFormManipulation.cs" />
     <Compile Include="FormManipulation\FTPGetGMI.cs" />
     <Compile Include="FormManipulation\GridViewContractSummaryManipulation.cs" />
@@ -259,6 +265,9 @@
     <Compile Include="TMLModelDBQueries.cs" />
     <Compile Include="TradingSystemConstants.cs" />
     <Compile Include="TSErrorCatch.cs" />
+    <None Include="DataClassesTMLDB.dbml.layout">
+      <DependentUpon>DataClassesTMLDB.dbml</DependentUpon>
+    </None>
     <EmbeddedResource Include="Forms\AdmReportSummaryForm.resx">
       <DependentUpon>AdmReportSummaryForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -319,6 +328,11 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.config" />
+    <None Include="DataClassesTMLDB.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>DataClassesTMLDB.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\DataSources\OptionSpreadManager.datasource" />
@@ -377,6 +391,9 @@
       <Project>{e7fa304f-8529-4064-bc01-15f7d526b010}</Project>
       <Name>StageOrdersToTTWPFLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

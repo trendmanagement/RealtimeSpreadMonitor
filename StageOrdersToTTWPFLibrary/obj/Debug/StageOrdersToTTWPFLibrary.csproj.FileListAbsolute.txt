@@ -20,3 +20,8 @@ D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\obj\Debug\Stag
 D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\obj\Debug\StageOrdersToTTWPFLibrary.csproj.GenerateResource.Cache
 D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\obj\Debug\StageOrdersToTTWPFLibrary.dll
 D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\obj\Debug\StageOrdersToTTWPFLibrary.pdb
+D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\bin\Debug\MongoDB.Bson.dll
+D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\bin\Debug\MongoDB.Driver.Core.dll
+D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\bin\Debug\MongoDB.Driver.dll
+D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\bin\Debug\MongoDB.Bson.xml
+D:\RealtimeSpread\RealtimeSpreadMonitor\StageOrdersToTTWPFLibrary\bin\Debug\MongoDB.Driver.xml

@@ -433,7 +433,9 @@ namespace RealtimeSpreadMonitor
 
                     queryWhereString.Append(" tblinstruments.idinstrument = ");
 
-                    queryWhereString.Append(instrumentArray[i].instrumentIdEOD);
+                    //queryWhereString.Append(instrumentArray[i].instrumentIdEOD);
+
+                    queryWhereString.Append(idInstrumentListOfSubstitutes[i]);
 
                 }
 

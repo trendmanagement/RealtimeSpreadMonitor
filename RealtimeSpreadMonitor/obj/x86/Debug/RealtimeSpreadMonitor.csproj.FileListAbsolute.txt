@@ -33,3 +33,8 @@ D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\obj\x86\Debug\Real
 D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\obj\x86\Debug\RealtimeSpreadMonitor.Forms.OptionPayoffComparison.resources
 D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\obj\x86\Debug\RealtimeSpreadMonitor.Forms.OptionPayoffComparisonUserControl.resources
 D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\obj\x86\Debug\RealtimeSpreadMonitor.Forms.OptionPLChartUserForm.resources
+D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\bin\Debug\MongoDB.Bson.dll
+D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\bin\Debug\MongoDB.Driver.Core.dll
+D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\bin\Debug\MongoDB.Driver.dll
+D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\bin\Debug\MongoDB.Bson.xml
+D:\RealtimeSpread\RealtimeSpreadMonitor\RealtimeSpreadMonitor\bin\Debug\MongoDB.Driver.xml
