@@ -1083,8 +1083,22 @@ namespace RealtimeSpreadMonitor
                                                         optionStrategies[i].instrument.optionStrikeIncrement,
                                                         optionStrategies[i].instrument.optionStrikeDisplay);
 
-                                int w = optionStrategies[i].rollIntoLegInfo[legCounter].cqgSymbol
-                                    .IndexOf(strikeString);
+
+                               int w = optionStrategies[i].rollIntoLegInfo[legCounter].cqgSymbol
+                                        .IndexOf(strikeString);
+
+                                if(w < 0)
+                                {
+                                    String caption = "Error when setting up roll data";
+                                    String message = "Can't find the strike price in the symbol";
+                                    MessageBoxButtons buttons = MessageBoxButtons.OK;
+                                    System.Windows.Forms.DialogResult result;
+
+                                    // Displays the MessageBox.
+                                    result = MessageBox.Show(message, caption, buttons, MessageBoxIcon.Error);
+                                    
+                                }
+
 
                                 //String x = optionStrategies[i].rollIntoLegInfo[legCounter].cqgSymbol.Substring(
                                 //   0, w);
@@ -1291,6 +1305,9 @@ namespace RealtimeSpreadMonitor
                     optionStrategies[0].instrument = new Instrument();
 
                 }
+
+                //DataClassesTMLDBDataContext contextTMLDB = new DataClassesTMLDBDataContext(
+                //System.Configuration.ConfigurationManager.ConnectionStrings["TMLDBConnectionString"].ConnectionString);
 
                 instruments = btdb.queryInstruments(initializationParms.idPortfolioGroup);
 

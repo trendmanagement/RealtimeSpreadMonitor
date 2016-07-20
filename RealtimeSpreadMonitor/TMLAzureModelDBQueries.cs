@@ -242,6 +242,148 @@ namespace RealtimeSpreadMonitor
 
         }
 
+        DataClassesTMLDBDataContext contextTMLDB = new DataClassesTMLDBDataContext(
+            System.Configuration.ConfigurationManager.ConnectionStrings["RealtimeSpreadMonitor.Properties.Settings.TMLDBConnectionString"].ConnectionString);
+
+        public Instrument[] queryInstrumentsNEWWITHLINQ(int idPortfoliogroup)
+        {
+            //DataClassesTMLDBDataContext contextTMLDB = new DataClassesTMLDBDataContext(
+            //    System.Configuration.ConfigurationManager.ConnectionStrings["TMLDBConnectionString"].ConnectionString);
+
+            //contextTMLDB.tblinstruments.Join()
+
+            //var portGroupInstruments = (from portfolioinstrumentlist in contextTMLDB.tblportfolioinstrumentlists
+            //                            join portfoliogroup in contextTMLDB.tblportfoliogroups
+            //                                on portfolioinstrumentlist.idportfolioinstrumentlist equals portfoliogroup.idportfolioinstrumentlist
+            //                            where portfoliogroup.idportfoliogroup == idPortfoliogroup
+            //                            select portfolioinstrumentlist.idinstrument);
+
+            var portGroupInstruments = from portfolioinstrumentlist in contextTMLDB.tblportfolioinstrumentlists
+                                       join portfoliogroup in contextTMLDB.tblportfoliogroups
+                                       on portfolioinstrumentlist.idportfolioinstrumentlist equals portfoliogroup.idportfolioinstrumentlist
+                                       where portfoliogroup.idportfoliogroup == idPortfoliogroup
+                                       join inst in contextTMLDB.tblinstruments
+                                       on portfolioinstrumentlist.idinstrument equals inst.idinstrument
+                                       //where portfolioinstrumentlist.Idinstrument == instruments.Idinstrument
+                                       from exchanges in contextTMLDB.tblexchanges
+                                       where exchanges.idexchange == inst.idexchange
+                                       select new { inst, portfoliogroup, exchanges };
+            var x = portGroupInstruments.ToList();
+
+            //var portGroupInstruments = contextTMLDB.tblinstruments.Where(n => n.idinstrument == 21).ToList();
+
+            //List<tblinstrument> portGroupInstruments = contextTMLDB.tblinstruments.ToList();
+
+            //tblinstrument[] portGroupInstruments = contextTMLDB.tblinstruments.Where(n => n.idinstrument >= 21).ToArray();
+
+            //List <tbl test = contextTMLDB.tblportfoliogroups.Where(n => n.idportfoliogroup == idPortfoliogroup).ToList();
+            //var portGroupInstruments = contextTMLDB.tblinstruments.Where(m => m. in test.);
+
+
+            //join portfoliogroup in contextTMLDB.tblportfoliogroups
+            //    on portfolioinstrumentlist.idportfolioinstrumentlist equals portfoliogroup.idportfolioinstrumentlist
+            //where portfoliogroup.idportfoliogroup == idPortfoliogroup
+            //select portfolioinstrumentlist.idinstrument;
+
+            //TSErrorCatch.debugWriteOut(portGroupInstruments. + " ");
+
+            for (int i = 0; i < x.Count(); i++)
+            {
+                TSErrorCatch.debugWriteOut(x[i].inst.idinstrument + " ");
+            }
+
+            //foreach (var item in x)
+            //{
+               // TSErrorCatch.debugWriteOut(item.idinstrument + " " );
+
+            //    Console.WriteLine(item.inst.idinstrument);
+            //}
+            
+
+                                        //from a in contextTMLDB.tblportfoliogroups where a.idportfoliogroup == idPortfoliogroup
+                                    //select new tblportfoliogroup { a.i })
+                //contextTMLDB.tblportfoliogroups.Where(id => id.idportfoliogroup == idPortfoliogroup).ToList();
+
+            //var test2 = from instr in contextTMLDB.tblinstruments
+            //            join exchange in contextTMLDB.tblexchanges on instr.idexchange equals exchange.idexchange
+            //            where portGroupInstruments.Contains(instr.idinstrument)
+                
+                //from inst in tblinstrument
+                //where inst.idinstrument //, cqgdb.tblportfoliogroups, cqgdb.tblportfolioinstrumentlist, cqgdb.tblexchange
+
+            Instrument[] instruments = null;
+
+            try
+            {
+
+                DataSet portfolioDataSet = new DataSet();
+
+                StringBuilder dataQuery = new StringBuilder();
+
+                //dataQuery.Append("SELECT distinct tblinstruments.*");
+                //dataQuery.Append(" FROM tblinstruments, tblportfoliodailyselection");
+
+                dataQuery.Append("SELECT tblinstruments.idinstrument,symbol,description,idinstrumentgroup,ticksize,");
+                dataQuery.Append(" tickdisplay,tickvalue,margin,timeshifthours,cqgsymbol,");
+                dataQuery.Append(" commissionpercontract, listedspread, exchangesymbol, stoptype, limittickoffset,");
+                dataQuery.Append(" optionticksize, optiontickdisplay, optiontickvalue, spanoptionstart, optionstrikedisplay,");
+                dataQuery.Append(" optionstrikeincrement,");
+                dataQuery.Append(" secondaryoptionticksize, secondaryoptiontickvalue, secondaryoptiontickdisplay, secondaryoptionticksizerule, usedailycustomdata, customdayboundarytime,");
+                dataQuery.Append(" admcode, admexchangecode, optionadmstrikedisplay, admfuturepricefactor, admoptionpricefactor, admoptionftpfilestrikedisplay,");
+                dataQuery.Append(" decisionoffsetminutes,");
+                dataQuery.Append(" spanfuturecode, spanoptioncode,");
+                dataQuery.Append(" tblexchange.exchange, tblexchange.spanexchangesymbol, tblexchange.spanExchWebAPISymbol,");
+                dataQuery.Append(" tblinstruments.substitutesymbol_eod, tblinstruments.instrumentsymbol_pre_eod, tblinstruments.instrumentsymboleod_eod,");
+                dataQuery.Append(" tblinstruments.instrumentid_eod, tradingTechnologiesExchange, optionexchangesymbol, optionstrikedisplayTT,");
+                dataQuery.Append(" exchangesymbolTT, optionexchangesymbolTT, tradingTechnologiesGateway, settlementtime");
+                //dataQuery.Append(" tickdisplayTT, optiontickdisplayTT");
+
+                dataQuery.Append(" FROM cqgdb.tblinstruments, cqgdb.tblportfoliogroups, cqgdb.tblportfolioinstrumentlist, cqgdb.tblexchange");
+
+                dataQuery.Append(" WHERE tblinstruments.idinstrument = tblportfolioinstrumentlist.idinstrument");
+                dataQuery.Append(" AND tblinstruments.idexchange = tblexchange.idexchange");
+                dataQuery.Append(" AND tblportfoliogroups.idportfoliogroup = ");
+                dataQuery.Append(idPortfoliogroup);
+                dataQuery.Append(" AND tblportfoliogroups.idportfolioinstrumentlist = tblportfolioinstrumentlist.idportfolioinstrumentlist");
+                dataQuery.Append(" ORDER BY tblinstruments.idinstrument");
+
+                //TSErrorCatch.debugWriteOut(dataQuery.ToString());
+
+                //MySqlDataAdapter cmdGetPortfolioData = new MySqlDataAdapter(dataQuery.ToString(), conn);
+                //int instRows = cmdGetPortfolioData.Fill(portfolioDataSet);
+
+
+                int instRows = ConnectDBSqlDataAdapter(dataQuery.ToString(), portfolioDataSet);
+
+
+
+                DataRow[] instrumentListFromDB = portfolioDataSet.Tables[0].Select();
+
+                if (instRows > 0)
+                {
+                    instruments = new Instrument[instRows];
+
+
+
+                    for (int counterDBInstrumentList = 0; counterDBInstrumentList < instRows; counterDBInstrumentList++)
+                    {
+                        instruments[counterDBInstrumentList] = fillInstrument(instrumentListFromDB, counterDBInstrumentList);
+
+
+                        
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TSErrorCatch.errorCatchOut(Convert.ToString(this), ex);
+            }
+
+            return instruments;
+
+        }
+
         /// <summary>
         /// Queries the instruments.
         /// </summary>
