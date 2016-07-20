@@ -16,5 +16,5 @@ DEBUG;TRACE
 18579716984
 Themes\Generic.xaml;View\ExecutionView.xaml;View\FIXMessageView.xaml;View\OrderView.xaml;View\StageOrdersMainView.xaml;
 
-True
+False
 
