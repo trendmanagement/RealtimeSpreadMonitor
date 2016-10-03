@@ -67,7 +67,7 @@ namespace RealtimeSpreadMonitor.Forms
         private void loadFilesThreadSafe(String file)
         {
             if (file.EndsWith(".xls")
-                    || file.EndsWith(".xlt") || file.EndsWith(".csv"))
+                    || file.EndsWith(".xlt") || file.ToLower().EndsWith(".csv"))
             {
                 bool import = true;
 

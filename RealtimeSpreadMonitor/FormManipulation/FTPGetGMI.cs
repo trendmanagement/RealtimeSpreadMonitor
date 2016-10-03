@@ -143,6 +143,20 @@ namespace RealtimeSpreadMonitor.FormManipulation
                 }
                 break;
 
+                case "rcg":
+                {
+                    sessionOptions.Protocol = Protocol.Sftp;
+                    sessionOptions.HostName = "files.rcgdirect.com";
+                    sessionOptions.UserName = "boss_njoyce";
+                    sessionOptions.Password = "Tml111174";
+                    sessionOptions.PortNumber = 34022;
+                    //sessionOptions.SshHostKeyFingerprint =
+                    //    "ssh-rsa 1024 f2:7d:42:65:16:f5:9b:da:30:f9:9f:b3:d8:80:00:3e";
+                    sessionOptions.SshHostKeyFingerprint =
+                        "ssh-rsa 1024 b5:b6:e8:f1:ba:49:b0:51:7e:6e:68:45:41:37:b1:06";
+                }
+                break;
+
             }
 
             return sessionOptions;
@@ -171,6 +185,13 @@ namespace RealtimeSpreadMonitor.FormManipulation
                     }
                     break;
 
+                case "rcg":
+                    {
+                        prelimFile.Append("TRND");
+                        prelimFile.Append(".csv");
+                    }
+                    break;
+
             }
 
             return prelimFile.ToString();
@@ -193,6 +214,15 @@ namespace RealtimeSpreadMonitor.FormManipulation
                 case "wedbush":
                     {
                         poslimFile.Append("pos");
+                        poslimFile.Append(positionFileDate.ToString("yyyyMMdd",
+                            DateTimeFormatInfo.InvariantInfo));
+                        poslimFile.Append(".csv");
+                    }
+                    break;
+
+                case "rcg":
+                    {
+                        poslimFile.Append("POS_");
                         poslimFile.Append(positionFileDate.ToString("yyyyMMdd",
                             DateTimeFormatInfo.InvariantInfo));
                         poslimFile.Append(".csv");

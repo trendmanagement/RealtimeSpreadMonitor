@@ -42,10 +42,10 @@ namespace RealtimeSpreadMonitor
         //static string transactionsHttp = "https://cmecorenr.cmegroup.com/MarginServiceApi/transactions";
         //static string portfoliosHttp = "https://cmecorenr.cmegroup.com/MarginServiceApi/portfolios";
 
-        static string smartClickID = "API_TMQREXO_MARGIN";
-        static string pwd = "NJoyce111174$";
+        static string smartClickID = System.Configuration.ConfigurationManager.AppSettings["cmeCoreID"];
+        static string pwd = System.Configuration.ConfigurationManager.AppSettings["cmeCorePwd"];
 
-        
+
 
         private List<OptionSpreadExpression> optionSpreadExpressionList;
         private OptionStrategy[] optionStrategies;

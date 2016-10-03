@@ -293,10 +293,13 @@ namespace RealtimeSpreadMonitor
     internal enum FTPInputFileTypes
     {
         ADM_WEB_INTERFACE_FILES,
+        POSITION_FILE_WEDBUSH_OR_RCG,
         POSITION_FILE_WEDBUSH,
+        POSITION_FILE_RCG,
         TRANSACTION_FILE_WEDBUSH,
         POSITION_FILE_ADM,
-        TRANSACTION_FILE_ADM
+        TRANSACTION_FILE_ADM,
+        TRANSACTION_FILE_RCG,
     }
 
     internal class ImportFileCheck

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Windows.Forms;
+using RealtimeSpreadMonitor.GMI;
+using static RealtimeSpreadMonitor.GMI.GMI_FileRead;
 
 namespace RealtimeSpreadMonitor
 {
@@ -158,15 +160,6 @@ namespace RealtimeSpreadMonitor
                 {
                     bool firstLine = true;
 
-                    //if(importFileCheck.importingBackedUpSavedFile)
-                    //{
-                    //    firstLine = false;
-                    //}
-
-
-
-
-
                     if (File.Exists(fileNames[fileCounter]))
                     {
                         DateTime lastWriteTime = File.GetLastWriteTime(fileNames[fileCounter]);
@@ -176,7 +169,6 @@ namespace RealtimeSpreadMonitor
                                 FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                             StreamReader streamReader = new StreamReader(fileStream);
                             
-                            //String separator = "\t";
 
                             if (fileNames[fileCounter].ToLower().EndsWith(".csv"))
                             {
@@ -186,7 +178,7 @@ namespace RealtimeSpreadMonitor
 
                                 if (parsedFileName.Last().Substring(0, 3).ToLower().CompareTo("pos") == 0)
                                 {
-                                    cSVImportFileType = FTPInputFileTypes.POSITION_FILE_WEDBUSH;
+                                    cSVImportFileType = FTPInputFileTypes.POSITION_FILE_WEDBUSH_OR_RCG;
 
                                     brokerImportFiles = BrokerImportFiles.GMI_IMPORT_CSV_FILES;
                                 }
@@ -196,7 +188,12 @@ namespace RealtimeSpreadMonitor
 
                                     brokerImportFiles = BrokerImportFiles.GMI_IMPORT_CSV_FILES;
                                 }
+                                else if (parsedFileName.Last().Substring(0, 4).ToLower().CompareTo("trnd") == 0)
+                                {
+                                    cSVImportFileType = FTPInputFileTypes.TRANSACTION_FILE_RCG;
 
+                                    brokerImportFiles = BrokerImportFiles.GMI_IMPORT_CSV_FILES;
+                                }
                                 else if (parsedFileName.Last().ToLower().EndsWith("adatpos.csv"))
                                 {
                                     cSVImportFileType = FTPInputFileTypes.POSITION_FILE_ADM;
@@ -229,6 +226,9 @@ namespace RealtimeSpreadMonitor
                                 brokerImportFiles = BrokerImportFiles.ADM_WEB_IMPORT_FILES;
                             }
 
+                            bool setFileReader = false;
+                            Fill_GMI_ImportDelegate Import_GMI = null;
+
                             while (!(streamReader.EndOfStream) && importFileCheck.importfile)
                             {
                                 String line = streamReader.ReadLine();
@@ -254,29 +254,37 @@ namespace RealtimeSpreadMonitor
                                         firstLine = false;
                                     }
 
+                                    
+
+                                    
+
                                     if (firstLine)
                                     {
-                                        firstLine = false;
+                                        //firstLine = false;
 
-                                        if (importFileCheck.importingBackedUpSavedFile)
+                                        if(cSVImportFileType == FTPInputFileTypes.POSITION_FILE_WEDBUSH_OR_RCG)
                                         {
-                                            brokerImportFiles = BrokerImportFiles.BACKUP_SAVED_FILE;
 
-                                            //if (stringList.Count > 0)
+                                            if (stringList.Count > 0)
                                             {
                                                 //brokerImportFiles = BrokerImportFiles.BACKUP_SAVED_FILE;
 
-                                                //if (stringList[0].CompareTo(
-                                                //        Enum.GetName(typeof(BrokerImportFiles), BrokerImportFiles.ADM_WEB_IMPORT_FILES)) == 0)
-                                                //{
-                                                    
-                                                //}
-                                                //else if (stringList[0].CompareTo(
-                                                //        Enum.GetName(typeof(BrokerImportFiles), BrokerImportFiles.GMI_IMPORT_CSV_FILES)) == 0)
-                                                //{
-                                                //    brokerImportFiles = BrokerImportFiles.GMI_IMPORT_CSV_FILES;
-                                                //}
+                                                if (stringList[0].CompareTo("R I D") == 0)
+                                                {
+                                                    cSVImportFileType = FTPInputFileTypes.POSITION_FILE_RCG;
+                                                }
+                                                else
+                                                {
+                                                    cSVImportFileType = FTPInputFileTypes.POSITION_FILE_WEDBUSH;
+                                                }
+
                                             }
+                                        }
+
+                                        else if (importFileCheck.importingBackedUpSavedFile)
+                                        {
+                                            brokerImportFiles = BrokerImportFiles.BACKUP_SAVED_FILE;
+
 
                                         }
                                         //else if (brokerImportFiles == BrokerImportFiles.ADM_FILES)
@@ -308,324 +316,127 @@ namespace RealtimeSpreadMonitor
                                                 stringListCounter++;
                                             }
                                         }
+
                                     }
-                                    else if ((importFileCheck.importingBackedUpSavedFile
-                                        || cSVImportFileType == FTPInputFileTypes.ADM_WEB_INTERFACE_FILES)
 
-                                    && importFileCheck.importfile && stringList.Count > 0
-                                    && stringList[(int)ADM_DETAIL_FIELDS.PEXCH].Trim().Length > 0
-                                    && stringList[(int)ADM_DETAIL_FIELDS.PFC].Trim().Length > 0
-                                    && stringList[(int)ADM_DETAIL_FIELDS.PCTYM].Trim().Length > 0)
+                                    if (!setFileReader)
                                     {
-                                        ADMPositionImportWeb aDMSummaryImport = new ADMPositionImportWeb();
-
-                                        admSummaryFieldsList.Add(aDMSummaryImport);
-
-                                        //aDMSummaryImport.rowInSummaryFieldList = admSummaryFieldsList.Count - 1;
-
-                                        aDMSummaryImport.RecordType = stringList[(int)ADM_DETAIL_FIELDS.RecordType];
-                                        aDMSummaryImport.POFFIC = stringList[(int)ADM_DETAIL_FIELDS.POFFIC];
-                                        aDMSummaryImport.PACCT = stringList[(int)ADM_DETAIL_FIELDS.PACCT];
-                                        aDMSummaryImport.PCUSIP = stringList[(int)ADM_DETAIL_FIELDS.PCUSIP];
-                                        aDMSummaryImport.PCUSIP2 = stringList[(int)ADM_DETAIL_FIELDS.PCUSIP2];
-                                        aDMSummaryImport.Description = stringList[(int)ADM_DETAIL_FIELDS.Description];
-
-                                        aDMSummaryImport.LongQuantity = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.LongQuantity);
-                                        aDMSummaryImport.ShortQuantity = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.ShortQuantity);
-                                        //aDMSummaryImport.Net = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.TradeDate);
-
-                                        //aDMSummaryImport.netContractsEditable = aDMSummaryImport.Net;
-
-                                        aDMSummaryImport.TradeDate = stringList[(int)ADM_DETAIL_FIELDS.TradeDate];
-                                        aDMSummaryImport.TradePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.TradePrice);
-
-                                        aDMSummaryImport.WeightedPrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.WeightedPrice);
-
-                                        //aDMSummaryImport.AveragePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.AveragePrice);
-
-                                        aDMSummaryImport.RealTimePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.RealTimePrice);
-                                        aDMSummaryImport.SettledPrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.SettledPrice);
-                                        aDMSummaryImport.PrelimPrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.PrelimPrice);
-                                        aDMSummaryImport.Value = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.Value);
-                                        aDMSummaryImport.ClosedValue = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.ClosedValue);
-                                        aDMSummaryImport.SettledValue = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.SettledValue);
-
-                                        aDMSummaryImport.Currency = stringList[(int)ADM_DETAIL_FIELDS.Currency];
-                                        aDMSummaryImport.PSUBTY = stringList[(int)ADM_DETAIL_FIELDS.PSUBTY];
-                                        aDMSummaryImport.PEXCH = getIntOutOfStringList(stringList, ADM_DETAIL_FIELDS.PEXCH);
-                                        aDMSummaryImport.PFC = stringList[(int)ADM_DETAIL_FIELDS.PFC];
-                                        aDMSummaryImport.aDMStrike = stringList[(int)ADM_DETAIL_FIELDS.Strike];
-
-                                        aDMSummaryImport.PCTYM = stringList[(int)ADM_DETAIL_FIELDS.PCTYM];
-
-                                        aDMSummaryImport.PCARD = stringList[(int)ADM_DETAIL_FIELDS.PCARD];
-
-
-                                        setupInstrumentAndfillStrikeInDecimal(aDMSummaryImport,
-                                            instruments, brokerImportFiles);
+                                        if ((importFileCheck.importingBackedUpSavedFile
+                                            || cSVImportFileType == FTPInputFileTypes.ADM_WEB_INTERFACE_FILES)
+                                            && importFileCheck.importfile)
+                                        {
+                                            Import_GMI = new Fill_GMI_ImportDelegate(GMI_FileRead.FillGMI_ImportFromBackup_Or_ADMWeb);
+                                            setFileReader = true;
+                                        }
+                                        else if (cSVImportFileType == FTPInputFileTypes.POSITION_FILE_WEDBUSH)
+                                        {
+                                            Import_GMI = new Fill_GMI_ImportDelegate(GMI_FileRead.FillGMI_Position_Wedbush);
+                                            setFileReader = true;
+                                        }
+                                        else if (cSVImportFileType == FTPInputFileTypes.TRANSACTION_FILE_WEDBUSH)
+                                        {
+                                            Import_GMI = new Fill_GMI_ImportDelegate(GMI_FileRead.FillGMI_Transaction_Wedbush);
+                                            setFileReader = true;
+                                        }
+                                        else if (cSVImportFileType == FTPInputFileTypes.POSITION_FILE_RCG)
+                                        {
+                                            Import_GMI = new Fill_GMI_ImportDelegate(GMI_FileRead.FillGMI_Position_RCG);
+                                            setFileReader = true;
+                                        }
+                                        else if (cSVImportFileType == FTPInputFileTypes.TRANSACTION_FILE_RCG)
+                                        {
+                                            Import_GMI = new Fill_GMI_ImportDelegate(GMI_FileRead.FillGMI_Transaction_RCG);
+                                            setFileReader = true;
+                                        }
+                                        else if (cSVImportFileType == FTPInputFileTypes.POSITION_FILE_ADM)
+                                        {
+                                            Import_GMI = new Fill_GMI_ImportDelegate(GMI_FileRead.FillGMI_Position_ADM);
+                                            setFileReader = true;
+                                        }
+                                        else if (cSVImportFileType == FTPInputFileTypes.TRANSACTION_FILE_ADM)
+                                        {
+                                            Import_GMI = new Fill_GMI_ImportDelegate(GMI_FileRead.FillGMI_Transaction_ADM);
+                                            setFileReader = true;
+                                        }
                                     }
-                                    else if (cSVImportFileType == FTPInputFileTypes.POSITION_FILE_WEDBUSH
-                                        && stringList.Count > 283
-                                        &&
-                                        (stringList[0].CompareTo("C") != 0))
+
+
+                                    if (!firstLine && setFileReader)
                                     {
-                                        ADMPositionImportWeb aDMSummaryImport = new ADMPositionImportWeb();
+                                        ADMPositionImportWeb aDMSummaryImport = Import_GMI(stringList);
 
-                                        admSummaryFieldsList.Add(aDMSummaryImport);
-
-                                        if (stringList[0].CompareTo("P") == 0)
+                                        if (aDMSummaryImport != null)
                                         {
-                                            aDMSummaryImport.RecordType = "Position";
-                                        }
-                                        else
-                                        {
-                                            aDMSummaryImport.RecordType = "Transaction";
-                                        }
-
-
-                                        aDMSummaryImport.POFFIC = stringList[2];
-                                        aDMSummaryImport.PACCT = stringList[3];
-                                        aDMSummaryImport.PCUSIP = stringList[5];
-                                        aDMSummaryImport.PCUSIP2 = stringList[6];
-                                        aDMSummaryImport.Description = stringList[77];
-
-                                        aDMSummaryImport.LongQuantity = Convert.ToDouble(stringList[274]);
-                                        aDMSummaryImport.ShortQuantity = Convert.ToDouble(stringList[275]);
-
-                                        aDMSummaryImport.TradeDate = stringList[16];
-                                        aDMSummaryImport.TradePrice = Convert.ToDouble(stringList[17]);
-
-                                        aDMSummaryImport.WeightedPrice = 0;
-
-                                        //aDMSummaryImport.AveragePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.AveragePrice);
-
-                                        aDMSummaryImport.RealTimePrice = 0;
-                                        aDMSummaryImport.SettledPrice = 0;
-                                        aDMSummaryImport.PrelimPrice = 0;
-                                        aDMSummaryImport.Value = 0;
-                                        aDMSummaryImport.ClosedValue = 0;
-                                        aDMSummaryImport.SettledValue = 0;
-
-                                        aDMSummaryImport.Currency = stringList[283];
-                                        aDMSummaryImport.PSUBTY = stringList[10];
-                                        aDMSummaryImport.PEXCH = Convert.ToInt32(stringList[97]);
-                                        aDMSummaryImport.PFC = stringList[98];
-                                        aDMSummaryImport.aDMStrike = stringList[12];
-
-                                        aDMSummaryImport.PCTYM = stringList[7];
-
-                                        aDMSummaryImport.PCARD = stringList[139];
-
-                                        setupInstrumentAndfillStrikeInDecimal(aDMSummaryImport,
-                                            instruments, brokerImportFiles);
-                                    }
-                                    else if (cSVImportFileType == FTPInputFileTypes.TRANSACTION_FILE_WEDBUSH
-                                        && stringList.Count > 64
-                                        &&
-                                        (stringList[1].CompareTo("C") != 0))
-                                    {
-                                        ADMPositionImportWeb aDMSummaryImport = new ADMPositionImportWeb();
-
-                                        admSummaryFieldsList.Add(aDMSummaryImport);
-
-                                        if (stringList[1].CompareTo("T") == 0)
-                                        {
-                                            aDMSummaryImport.RecordType = "Transaction";
-                                        }
-                                        else
-                                        {
-                                            aDMSummaryImport.RecordType = "Position";
-                                        }
-
-
-                                        aDMSummaryImport.POFFIC = stringList[3];
-                                        aDMSummaryImport.PACCT = stringList[5];
-                                        aDMSummaryImport.PCUSIP = "";
-                                        aDMSummaryImport.PCUSIP2 = "";
-                                        aDMSummaryImport.Description = stringList[17];
-
-                                        aDMSummaryImport.LongQuantity = Convert.ToDouble(stringList[43]);
-                                        aDMSummaryImport.ShortQuantity = Convert.ToDouble(stringList[44]);
-
-                                        aDMSummaryImport.TradeDate = stringList[40];
-                                        aDMSummaryImport.TradePrice = Convert.ToDouble(stringList[49]);
-
-                                        aDMSummaryImport.WeightedPrice = 0;
-
-                                        aDMSummaryImport.RealTimePrice = Convert.ToDouble(stringList[27]);
-                                        aDMSummaryImport.SettledPrice = 0;
-                                        aDMSummaryImport.PrelimPrice = 0;
-                                        aDMSummaryImport.Value = 0;
-                                        aDMSummaryImport.ClosedValue = 0;
-                                        aDMSummaryImport.SettledValue = 0;
-
-                                        aDMSummaryImport.Currency = stringList[36];
-                                        aDMSummaryImport.PSUBTY = stringList[23];
-                                        aDMSummaryImport.PEXCH = Convert.ToInt32(stringList[14]);
-                                        aDMSummaryImport.PFC = stringList[16];
-                                        aDMSummaryImport.aDMStrike = stringList[24];
-
-                                        aDMSummaryImport.PCTYM = stringList[20];
-
-                                        aDMSummaryImport.PCARD = stringList[64];
-
-                                        setupInstrumentAndfillStrikeInDecimal(aDMSummaryImport,
-                                            instruments, brokerImportFiles);
-                                    }
-                                    else if (cSVImportFileType == FTPInputFileTypes.POSITION_FILE_ADM
-                                        && 
-                                        (stringList[0].CompareTo("C") != 0) )
-                                    {
-                                        ADMPositionImportWeb aDMSummaryImport = new ADMPositionImportWeb();
-
-                                        admSummaryFieldsList.Add(aDMSummaryImport);
-
-                                        if (stringList[0].CompareTo("P") == 0)
-                                        {
-                                            aDMSummaryImport.RecordType = "Position";
-                                        }
-                                        else
-                                        {
-                                            aDMSummaryImport.RecordType = "Transaction";
-                                        }
-
-
-                                        aDMSummaryImport.POFFIC = stringList[2];
-                                        aDMSummaryImport.PACCT = stringList[3];
-                                        aDMSummaryImport.PCUSIP = stringList[5];
-                                        aDMSummaryImport.PCUSIP2 = "";
-                                        aDMSummaryImport.Description = stringList[20];
-
-                                        aDMSummaryImport.LongQuantity = Convert.ToDouble(stringList[71]);
-                                        aDMSummaryImport.ShortQuantity = Convert.ToDouble(stringList[72]);
-
-                                        aDMSummaryImport.TradeDate = stringList[13];
-
-
-                                        aDMSummaryImport.TradePrice = Convert.ToDouble(stringList[14]);
-
-
-
-                                        aDMSummaryImport.WeightedPrice = 0;
-
-                                        //aDMSummaryImport.AveragePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.AveragePrice);
-
-                                        aDMSummaryImport.RealTimePrice = 0;
-                                        aDMSummaryImport.SettledPrice = 0;
-                                        aDMSummaryImport.PrelimPrice = 0;
-                                        aDMSummaryImport.Value = 0;
-                                        aDMSummaryImport.ClosedValue = 0;
-                                        aDMSummaryImport.SettledValue = 0;
-
-                                        aDMSummaryImport.Currency = stringList[76];
-                                        aDMSummaryImport.PSUBTY = stringList[9];
-                                        aDMSummaryImport.PEXCH = Convert.ToInt32(stringList[29]);
-                                        aDMSummaryImport.PFC = stringList[30];
-                                        aDMSummaryImport.aDMStrike = stringList[11];
-
-                                        aDMSummaryImport.PCTYM = stringList[6];
-
-                                        aDMSummaryImport.PCARD = stringList[53];
-
-                                        setupInstrumentAndfillStrikeInDecimal(aDMSummaryImport,
-                                            instruments, brokerImportFiles);
-                                    }
-                                    else if (cSVImportFileType == FTPInputFileTypes.TRANSACTION_FILE_ADM
-                                        && stringList.Count >= 38
-                                        && 
-                                        (stringList[0].CompareTo("C") != 0) )
-                                    {
-                                        DateTime tradeDateTest = new DateTime(Convert.ToInt16(stringList[12]),
-                                            Convert.ToInt16(stringList[10]), 
-                                            Convert.ToInt16(stringList[11]));
-
-
-
-                                        if (stringList[0].CompareTo("T") == 0
-                                            && tradeDateTest.CompareTo(DateTime.Now.Date) != 0)
-                                        {
-                                            //skip
-                                        }
-                                        else
-                                        {
-
-                                            ADMPositionImportWeb aDMSummaryImport = new ADMPositionImportWeb();
-
                                             admSummaryFieldsList.Add(aDMSummaryImport);
-
-                                            if (stringList[0].CompareTo("P") == 0)
-                                            {
-                                                aDMSummaryImport.RecordType = "Position";
-                                            }
-                                            else
-                                            {
-                                                aDMSummaryImport.RecordType = "Transaction";
-                                            }
-
-
-                                            aDMSummaryImport.POFFIC = stringList[2];
-                                            aDMSummaryImport.PACCT = stringList[3];
-                                            aDMSummaryImport.PCUSIP = stringList[5];
-                                            aDMSummaryImport.PCUSIP2 = "";
-                                            aDMSummaryImport.Description = stringList[25];
-
-                                            if (stringList[14].Trim().Length > 0)
-                                            {
-                                                aDMSummaryImport.LongQuantity = Convert.ToDouble(stringList[14]);
-                                            }
-
-                                            if (stringList[15].Trim().Length > 0)
-                                            {
-                                                aDMSummaryImport.ShortQuantity = Convert.ToDouble(stringList[15]);
-                                            }
-
-                                            StringBuilder tradeDate = new StringBuilder();
-                                            tradeDate.Append(stringList[12]);
-                                            tradeDate.Append(stringList[10]);
-                                            tradeDate.Append(stringList[11]);
-
-                                            aDMSummaryImport.TradeDate = tradeDate.ToString();
-
-
-                                            aDMSummaryImport.TradePrice = Convert.ToDouble(stringList[29]);
-
-
-
-                                            aDMSummaryImport.WeightedPrice = 0;
-
-                                            //aDMSummaryImport.AveragePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.AveragePrice);
-
-                                            aDMSummaryImport.RealTimePrice = 0;
-                                            aDMSummaryImport.SettledPrice = 0;
-                                            aDMSummaryImport.PrelimPrice = 0;
-                                            aDMSummaryImport.Value = 0;
-                                            aDMSummaryImport.ClosedValue = 0;
-                                            aDMSummaryImport.SettledValue = 0;
-
-                                            aDMSummaryImport.Currency = stringList[32];
-                                            aDMSummaryImport.PSUBTY = stringList[7];
-                                            aDMSummaryImport.PEXCH = Convert.ToInt32(stringList[27]);
-                                            aDMSummaryImport.PFC = stringList[26];
-
-                                            if (stringList[8].Trim().Length > 0)
-                                            {
-                                                aDMSummaryImport.aDMStrike = stringList[8].Trim();
-                                            }
-                                            else
-                                            {
-                                                aDMSummaryImport.aDMStrike = "0";
-                                            }
-
-                                            aDMSummaryImport.PCTYM = stringList[6];
-
-                                            aDMSummaryImport.PCARD = stringList[13];
 
                                             setupInstrumentAndfillStrikeInDecimal(aDMSummaryImport,
                                                 instruments, brokerImportFiles);
                                         }
                                     }
 
-                                }
+                                    if (firstLine)
+                                    {
+                                        firstLine = false;
+                                    }
+                                        //if (stringList.Count > 0
+                                        //&& stringList[(int)ADM_DETAIL_FIELDS.PEXCH].Trim().Length > 0
+                                        //&& stringList[(int)ADM_DETAIL_FIELDS.PFC].Trim().Length > 0
+                                        //&& stringList[(int)ADM_DETAIL_FIELDS.PCTYM].Trim().Length > 0)
+                                        //{
+                                        //    ADMPositionImportWeb aDMSummaryImport = new ADMPositionImportWeb();
+
+                                        //    admSummaryFieldsList.Add(aDMSummaryImport);
+
+                                        //    //aDMSummaryImport.rowInSummaryFieldList = admSummaryFieldsList.Count - 1;
+
+                                        //    aDMSummaryImport.RecordType = stringList[(int)ADM_DETAIL_FIELDS.RecordType];
+                                        //    aDMSummaryImport.POFFIC = stringList[(int)ADM_DETAIL_FIELDS.POFFIC];
+                                        //    aDMSummaryImport.PACCT = stringList[(int)ADM_DETAIL_FIELDS.PACCT];
+                                        //    aDMSummaryImport.PCUSIP = stringList[(int)ADM_DETAIL_FIELDS.PCUSIP];
+                                        //    aDMSummaryImport.PCUSIP2 = stringList[(int)ADM_DETAIL_FIELDS.PCUSIP2];
+                                        //    aDMSummaryImport.Description = stringList[(int)ADM_DETAIL_FIELDS.Description];
+
+                                        //    aDMSummaryImport.LongQuantity = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.LongQuantity);
+                                        //    aDMSummaryImport.ShortQuantity = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.ShortQuantity);
+                                        //    //aDMSummaryImport.Net = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.TradeDate);
+
+                                        //    //aDMSummaryImport.netContractsEditable = aDMSummaryImport.Net;
+
+                                        //    aDMSummaryImport.TradeDate = stringList[(int)ADM_DETAIL_FIELDS.TradeDate];
+                                        //    aDMSummaryImport.TradePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.TradePrice);
+
+                                        //    aDMSummaryImport.WeightedPrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.WeightedPrice);
+
+                                        //    //aDMSummaryImport.AveragePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.AveragePrice);
+
+                                        //    aDMSummaryImport.RealTimePrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.RealTimePrice);
+                                        //    aDMSummaryImport.SettledPrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.SettledPrice);
+                                        //    aDMSummaryImport.PrelimPrice = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.PrelimPrice);
+                                        //    aDMSummaryImport.Value = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.Value);
+                                        //    aDMSummaryImport.ClosedValue = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.ClosedValue);
+                                        //    aDMSummaryImport.SettledValue = getDoubleOutOfStringList(stringList, ADM_DETAIL_FIELDS.SettledValue);
+
+                                        //    aDMSummaryImport.Currency = stringList[(int)ADM_DETAIL_FIELDS.Currency];
+                                        //    aDMSummaryImport.PSUBTY = stringList[(int)ADM_DETAIL_FIELDS.PSUBTY];
+                                        //    aDMSummaryImport.PEXCH = getIntOutOfStringList(stringList, ADM_DETAIL_FIELDS.PEXCH);
+                                        //    aDMSummaryImport.PFC = stringList[(int)ADM_DETAIL_FIELDS.PFC];
+                                        //    aDMSummaryImport.aDMStrike = stringList[(int)ADM_DETAIL_FIELDS.Strike];
+
+                                        //    aDMSummaryImport.PCTYM = stringList[(int)ADM_DETAIL_FIELDS.PCTYM];
+
+                                        //    aDMSummaryImport.PCARD = stringList[(int)ADM_DETAIL_FIELDS.PCARD];
+
+
+                                        //    setupInstrumentAndfillStrikeInDecimal(aDMSummaryImport,
+                                        //        instruments, brokerImportFiles);
+                                        //}
+
+
+
+
+
+
+                                    }
                             }
 
                             streamReader.Close();

@@ -248,6 +248,8 @@
     <Compile Include="Forms\TML_TradingSystemAboutBox.designer.cs">
       <DependentUpon>TML_TradingSystemAboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="GMI\GMImaps.cs" />
+    <Compile Include="GMI\GMI_FileRead.cs" />
     <Compile Include="Mongo\MongoDBConnectionAndSetup.cs" />
     <Compile Include="Mongo\MongoObjectMethods.cs" />
     <Compile Include="Mongo\MongoObjectsForRealtime.cs" />
